@@ -185,6 +185,6 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		
 		Notes: 
 		
-			1. The first argument corresponds to the Roadmap index of the input cell line.
+		1. The first argument corresponds to the Roadmap index of the input cell line.
 			
-			2. The second argument corresponds to the number of decision trees used in the random forest algorithm.
+		2. The second argument corresponds to the number of decision trees used in the random forest algorithm.

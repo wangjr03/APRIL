@@ -88,7 +88,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* A union set of the genomic fragments (nodes), sorted  by chromosome and genomic locations. The result is stored as “../output/island_loc.txt”.
 	* Command line usage: 
 	
-		```Rscript 1_network_construction.R <path to the chromatin contact data>```
+		`Rscript 1_network_construction.R <path to the chromatin contact data>`
 
 2. 2_annotate_fragment.R: This script annotates each node as enhancers or promoters. The active gene, enhancer and TFs are selected here.
 	* Input data: 
@@ -99,7 +99,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		Two objects are integrated in "../output/island_annotation.Rdata": “enh_id” and “gene_id”. Both objects are a list object, which store the index of enhancers/promoters that can overlap with the fragments. The order of the fragments is the same as the input DNA fragments. The index of enhancers/promoters is relative to the consensus enhancer annotation file/promoter file. If the index is 0, it means the fragment cannot overlap with any enhancers/promoters. 
 	* Command line usage:
 	
-		```Rscript 2_annotate_fragment.R```
+		`Rscript 2_annotate_fragment.R`
 		
 		Note: the path of input data has been specified in the script.
 
@@ -116,7 +116,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* A vector contains functional annotation of fragments, which can be “E” (enhancer), “P”(promoter),”T”(TF) and “F”(other fragments)
 	* Command line usage:
 	
-		```Rscript 3_extract_frag_TF_matrix.R <cell_index>```
+		`Rscript 3_extract_frag_TF_matrix.R <cell_index>`
 		
 		Notes: The first argument corresponds to the Roadmap index of the input cell line. A full list of index of 127 cell lines and descriptions are provided as “ENCODE_cell_type.csv”
 
@@ -128,7 +128,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* Final APRIL subgraphs are stored as igraph objects in “../output/merged_skeleton_igraph.Rdata”. Only TFs linking two different modules are kept, other TFs are masked from the subgraph.
 	* Command line usage: 
 	
-		```Rscript 4_merge_network.R <TF_expression_threshold> <number_of_clusters>```
+		`Rscript 4_merge_network.R <TF_expression_threshold> <number_of_clusters>`
 		
 		Notes: 
 		
@@ -145,7 +145,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* A list stores the effect size of nodes in each network. The result is stored in "../output/graph_effect.Rdata".
 	* Command line usage: 
 		
-		```Rscript 5_annotate_effect.R <path to the SNP effect size data>``` 
+		`Rscript 5_annotate_effect.R <path to the SNP effect size data>`
 
 * 6_label_propagation.R: This script uses HotNet algorithm to propagate disease genes.
 	* Input data:
@@ -158,7 +158,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* A list shows the rank of prediction score of disease-related genes in each network, which is stored in "../output/propagate_rank.Rdata".
 	* Command line usage: 
 	
-		```Rscript 6_label_propagation.R <method_flag>``` 
+		`Rscript 6_label_propagation.R <method_flag>`
 		
 		Notes: 
 		
@@ -181,9 +181,10 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* The probability of each gene within the network to be the disease-related gene, which is stored in "../output/prob_disease_gene.txt".
 	* Command line usage: 
 		
-		```Rscript 7_random_forest.R <cell line index> <number_trees> <path to the disease gene data>```
+		`Rscript 7_random_forest.R <cell line index> <number_trees> <path to the disease gene data>`
 		
 		Notes: 
+		
 			1. The first argument corresponds to the Roadmap index of the input cell line.
 			
 			2. The second argument corresponds to the number of decision trees used in the random forest algorithm.

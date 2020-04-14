@@ -93,6 +93,7 @@ The enhancer annotation file has 3 columns:
 * `-f1`: required, path to the chromatin contact data
 * `-f2`: required, path to the SNP effect size data
 * `-f3`: required, path to the disease gene data
+* `-f4`: required, path to the significat eQTL data
 * `-i`: required, cell line index
 * `-t`: not required, TF expression threshold. DEFAULT: 1
 * `-n`: not required, number of clusters. DEFAULT: number of modules/20

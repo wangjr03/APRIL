@@ -131,8 +131,9 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		```Rscript 4_merge_network.R <TF_expression_threshold> <number_of_clusters>```
 		
 		Notes: 
-			* The first argument specifies the threshold of the expression for TFs. The default value will be 1, which is used to generate all results in this paper.
-			* The second argument specifies the number of module clusters. We used hierarchical clustering with the “complete” method based on  correlations.  The default value of clusters is “number of modules/20”. The result shown in this paper is generated with default value.
+		
+			1. The first argument specifies the threshold of the expression for TFs. The default value will be 1, which is used to generate all results in this paper.
+			2. The second argument specifies the number of module clusters. We used hierarchical clustering with the “complete” method based on  correlations.  The default value of clusters is “number of modules/20”. The result shown in this paper is generated with default value.
 
 * 5_annotate_effect.R: This script annotates effect size for each genomic fragment based on GWAS SNPs and maps the effect size of nodes in each network.
 	* Input data:
@@ -156,6 +157,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* A boxplot shows the performance of label propagation
 		* A list shows the rank of prediction score of disease-related genes in each network, which is stored in "../output/propagate_rank.Rdata".
 	* Command line usage: 
+	
 		```Rscript 6_label_propagation.R <method_flag>``` 
 		
 		Notes: 
@@ -182,5 +184,6 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		```Rscript 7_random_forest.R <cell line index> <number_trees> <path to the disease gene data>```
 		
 		Notes: 
-			* The first argument corresponds to the Roadmap index of the input cell line. A full list of index of 127 cell lines and descriptions are provided here:xxxxxx
-			* The second argument corresponds to the number of decision trees used in the random forest algorithm.
+			1. The first argument corresponds to the Roadmap index of the input cell line.
+			
+			2. The second argument corresponds to the number of decision trees used in the random forest algorithm.

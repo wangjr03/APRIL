@@ -33,7 +33,17 @@ The program is developed under `R/3.5.1` and depends on six R packages: `igraph`
 	2 | pos | int | Genetic variant position  
 	3 | effect | int | Effect size of the SNP in exact disease
 
-3. Disease gene annotation: Disease-related genes set is used in supervised learning to generate labelled data. The disease gene file just has column:
+3. Significant eQTLs: significant eQTLs file provides the p-value of significant eQTLs on the exact tissue, which should be in tab separated file with three columns:
+		
+		
+	col | abbrv. | type | description
+	--- | --- | --- | ---
+	1 | chr | string | Name of the chromosome
+	2 | pos | int | Genetic variant position  
+	3 | gene | string | Target gene of eQTL
+	4 | p-value | float | P-value of eQTL
+
+4. Disease gene annotation: Disease-related genes set is used in supervised learning to generate labelled data. The disease gene file just has column:
 
 
 	col | abbrv. | type | description
@@ -198,7 +208,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* The probability of each gene within the network to be the disease-related gene, which is stored in "../output/prob_disease_gene.txt".
 	* Command line usage: 
 		
-		`Rscript 7_random_forest.R <cell line index> <number_trees> <path to the disease gene data>`
+		`Rscript 7_random_forest.R <cell line index> <number_trees> <path to the disease gene data> <path to the eQTL data>`
 		
 		Notes: 
 		

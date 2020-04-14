@@ -9,7 +9,8 @@ library(caret)
 args <- commandArgs(T)
 flag = as.numeric(args[1])
 ntrees = as.numeric(args[2])
-# dis_gene = as.character(args[3])
+dis_gene = as.character(args[3])
+sig_eqtl = as.character(args[4])
 
 #### step1 ####
 # get the TF features index for each nodes
@@ -29,13 +30,6 @@ frag[,1] <- as.character(frag[,1])
 # })
 #
 # skeleton_igraph = skeleton_igraph[remove_index]
-
-remove_index <- sapply(skeleton_igraph, function(x){
-  tmp = grep(pattern = "chrX", x)
-  ifelse(length(tmp)==0, return(TRUE), return(FALSE))
-})
-
-skeleton_igraph = skeleton_igraph[remove_index]
 
 # combine the name
 frag_name <- sapply(1:nrow(frag), function(x){
@@ -85,7 +79,7 @@ gene_annotation[,6] <- as.character(gene_annotation[,6])
 gene_annotation[,7] <- as.character(gene_annotation[,7])
 
 # read disease genes
-disease_gene <- read.table("../data/disease_gene.txt")
+disease_gene <- read.table(dis_gene)
 disease_gene <- as.character(disease_gene[,1])
 disease_gene <- gene_annotation[match(table = gene_annotation[,6], disease_gene),7]
 
@@ -136,12 +130,11 @@ get_gene <- function(x,y){# x: graph, y:node_index
 }
 
 graph_gene <- mapply(get_gene, skeleton_igraph, node_index, SIMPLIFY = F)
-# eqtl set 
-# graph_gene_id <- unlist(lapply(graph_gene, function(x) unlist(x$gene_id) ))
-# graph_gene_id <- unique( data.frame(graph_gene_id) )
-# graph_gene_id[,1] <- as.character(graph_gene_id[,1])
-# kk<-semi_join(eqtl, graph_gene_id, by = c("V3"="graph_gene_id"))
 
+load("../output/graph_effect.Rdata")
+
+# eqtl set 
+eqtl <- read.table(sig_eqtl)
 
 #### step 4 ####
 # generate neg & pos features
@@ -300,7 +293,7 @@ for (i in 1:folds) {
 }
 
 ## Draw the averaged ROC curve and calculate AUC ##
-pdf("../fig6_final.pdf")
+pdf("../randomForest_diseaseGene.pdf")
 ROCperf <- prediction(val$predictions, val$labels) %>% performance("tpr","fpr") # calculate TPR & FPR
 ROCauc <- prediction(val$predictions, val$labels) %>% performance("auc")
 (mean_auroc <- mean(unlist(ROCauc@y.values))) #calculate AUC
@@ -313,7 +306,7 @@ prob_disease_test <- cbind(rownames(dat[unlist(dat_folds),]), unlist(val$predict
 rf <- randomForest(Label~., dat, ntree = ntrees)
 test_pred <- predict(rf, unlabel[,-1], type = "prob")
 prob_disease_unlabel <- test_pred[,2]
-#write.table(prob_disease, "../output/prob_disease_gene.txt", row.names = F, col.names = F, quote = F, sep = "\t")
+write.table(prob_disease, "../output/prob_disease_gene.txt", row.names = F, col.names = F, quote = F, sep = "\t")
 
 
 

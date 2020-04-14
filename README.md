@@ -35,9 +35,10 @@ col | abbrv. | type | description
 
 * Disease gene annotation: Disease-related genes set is used in supervised learning to generate labelled data. The disease gene file just has column:
 
+
 	col | abbrv. | type | description
--- | -- | -- | --
-1 | gene | string | Name of disease gene
+	-- | -- | -- | --
+	1 | gene | string | Name of disease gene
 
 
 ## Pre-calculated data

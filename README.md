@@ -101,7 +101,9 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 	
 		`Rscript 2_annotate_fragment.R`
 		
-		Note: the path of input data has been specified in the script.
+		Note:
+		
+		the path of input data has been specified in the script.
 
 3. 3_extract_frag_TF_matrix.R: This script identifies TF motif hits within fragments that are annotated as enhancers or promoters.
 	* Input data:
@@ -118,7 +120,9 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 	
 		`Rscript 3_extract_frag_TF_matrix.R <cell_index>`
 		
-		Notes: The first argument corresponds to the Roadmap index of the input cell line. A full list of index of 127 cell lines and descriptions are provided as “ENCODE_cell_type.csv”
+		Notes: 
+		
+		The first argument corresponds to the Roadmap index of the input cell line. A full list of index of 127 cell lines and descriptions are provided as “ENCODE_cell_type.csv”
 
 4. 4_merge_network.R: This script will merge multiple 3D modules with similar TF profiles together and construct merged sub-networks.
 	* Input data:
@@ -132,8 +136,9 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		
 		Notes: 
 		
-			1. The first argument specifies the threshold of the expression for TFs. The default value will be 1, which is used to generate all results in this paper.
-			2. The second argument specifies the number of module clusters. We used hierarchical clustering with the “complete” method based on  correlations.  The default value of clusters is “number of modules/20”. The result shown in this paper is generated with default value.
+		1. The first argument specifies the threshold of the expression for TFs. The default value will be 1, which is used to generate all results in this paper.
+		
+		2. The second argument specifies the number of module clusters. We used hierarchical clustering with the “complete” method based on  correlations.  The default value of clusters is “number of modules/20”. The result shown in this paper is generated with default value.
 
 * 5_annotate_effect.R: This script annotates effect size for each genomic fragment based on GWAS SNPs and maps the effect size of nodes in each network.
 	* Input data:
@@ -162,7 +167,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		
 		Notes: 
 		
-			The argument determines which version we use to propagate disease genes. It can be “GENE”, “OTHER” or “BOTH”. “GENE” means model just uses the effect size of genes; “OTHER” means model uses the effect size of other fragments except genes; “BOTH” means model uses the effect size of all fragments. The default value will be “BOTH”.
+		The argument determines which version we use to propagate disease genes. It can be “GENE”, “OTHER” or “BOTH”. “GENE” means model just uses the effect size of genes; “OTHER” means model uses the effect size of other fragments except genes; “BOTH” means model uses the effect size of all fragments. The default value will be “BOTH”.
 
 * 7_random_forest.R: This script uses random forest algorithm to predict disease genes.
 	* Input data:

@@ -98,6 +98,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 	* Output:
 		Two objects are integrated in "../output/island_annotation.Rdata": “enh_id” and “gene_id”. Both objects are a list object, which store the index of enhancers/promoters that can overlap with the fragments. The order of the fragments is the same as the input DNA fragments. The index of enhancers/promoters is relative to the consensus enhancer annotation file/promoter file. If the index is 0, it means the fragment cannot overlap with any enhancers/promoters. 
 	* Command line usage:
+	
 		```Rscript 2_annotate_fragment.R```
 		
 		Note: the path of input data has been specified in the script.
@@ -114,7 +115,9 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* A fragment-TF matrix is stored in "../output/frag_TF_mat.Rdata", where each row is a fragment and each column is an expressed TF in corresponding cell line.
 		* A vector contains functional annotation of fragments, which can be “E” (enhancer), “P”(promoter),”T”(TF) and “F”(other fragments)
 	* Command line usage:
-		Rscript 3_extract_frag_TF_matrix.R <cell_index>
+	
+		```Rscript 3_extract_frag_TF_matrix.R <cell_index>```
+		
 		Notes: The first argument corresponds to the Roadmap index of the input cell line. A full list of index of 127 cell lines and descriptions are provided as “ENCODE_cell_type.csv”
 
 4. 4_merge_network.R: This script will merge multiple 3D modules with similar TF profiles together and construct merged sub-networks.
@@ -124,7 +127,9 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 	* Output:
 		* Final APRIL subgraphs are stored as igraph objects in “../output/merged_skeleton_igraph.Rdata”. Only TFs linking two different modules are kept, other TFs are masked from the subgraph.
 	* Command line usage: 
-		Rscript 4_merge_network.R <TF_expression_threshold> <number_of_clusters>
+	
+		```Rscript 4_merge_network.R <TF_expression_threshold> <number_of_clusters>```
+		
 		Notes: 
 			* The first argument specifies the threshold of the expression for TFs. The default value will be 1, which is used to generate all results in this paper.
 			* The second argument specifies the number of module clusters. We used hierarchical clustering with the “complete” method based on  correlations.  The default value of clusters is “number of modules/20”. The result shown in this paper is generated with default value.
@@ -138,7 +143,8 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* A union set of the genomic fragments (nodes) , and the added effect size of each fragment is in the last column. The result is stored in “../output/frag_effect.Rdata”
 		* A list stores the effect size of nodes in each network. The result is stored in "../output/graph_effect.Rdata".
 	* Command line usage: 
-		Rscript 5_annotate_effect.R <path to the SNP effect size data> 
+		
+		```Rscript 5_annotate_effect.R <path to the SNP effect size data>``` 
 
 * 6_label_propagation.R: This script uses HotNet algorithm to propagate disease genes.
 	* Input data:
@@ -150,8 +156,10 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* A boxplot shows the performance of label propagation
 		* A list shows the rank of prediction score of disease-related genes in each network, which is stored in "../output/propagate_rank.Rdata".
 	* Command line usage: 
-		Rscript 6_label_propagation.R <method_flag> 
+		```Rscript 6_label_propagation.R <method_flag>``` 
+		
 		Notes: 
+		
 			The argument determines which version we use to propagate disease genes. It can be “GENE”, “OTHER” or “BOTH”. “GENE” means model just uses the effect size of genes; “OTHER” means model uses the effect size of other fragments except genes; “BOTH” means model uses the effect size of all fragments. The default value will be “BOTH”.
 
 * 7_random_forest.R: This script uses random forest algorithm to predict disease genes.
@@ -170,7 +178,9 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* An ROC shows the 10-fold cross validation performance
 		* The probability of each gene within the network to be the disease-related gene, which is stored in "../output/prob_disease_gene.txt".
 	* Command line usage: 
-		Rscript 7_random_forest.R <cell line index> <number_trees> <path to the disease gene data> 
+		
+		```Rscript 7_random_forest.R <cell line index> <number_trees> <path to the disease gene data>```
+		
 		Notes: 
 			* The first argument corresponds to the Roadmap index of the input cell line. A full list of index of 127 cell lines and descriptions are provided here:xxxxxx
 			* The second argument corresponds to the number of decision trees used in the random forest algorithm.

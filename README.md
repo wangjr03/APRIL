@@ -5,9 +5,9 @@ This package discovers novel and known disease genes by integrating connected gr
 
 ## Introduction
 The program takes the chromatin contact maps and GWAS SNPs as input and discovers novel disease genes. It can be applied to :
-* Discover and visualize high-order chromatin interactions from pair-wise chromatin contact datas.
-* Integrate GWAS SNPs with chromatin interactions data.
-* Predict new disease genes from the chromatin contact data and GWAS SNPs.
+1. Discover and visualize high-order chromatin interactions from pair-wise chromatin contact datas.
+2. Integrate GWAS SNPs with chromatin interactions data.
+3. Predict new disease genes from the chromatin contact data and GWAS SNPs.
 
 ## Dependencies
 The program is developed under R/3.5.1 and depends on six R packages: igraph, Matrix, randomForest, ROCR, caret, dplyr and stringr.
@@ -46,7 +46,7 @@ The program is developed under R/3.5.1 and depends on six R packages: igraph, Ma
 
 
 ## Pre-calculated data
-* Gene annotation: The comprehensive gene annotation with GENCODE V19 has been integrated with the program. The gene annotation file should have at least seven columns:
+1. Gene annotation: The comprehensive gene annotation with GENCODE V19 has been integrated with the program. The gene annotation file should have at least seven columns:
 
 
 	col | abbrv. | type | description
@@ -62,7 +62,7 @@ The program is developed under R/3.5.1 and depends on six R packages: igraph, Ma
 	Note: Using the alternative gene annotation file is not supported with the current version of APRIL, since it will also change multiple other pre-calculated input data. 
 With the gene annotation file, the promoters of protein-coding genes are calculated (“../promoter.txt”). The promoters are defined as the +/1 kb flanking region of the TSS.
 
-* Enhancer annotation: A consensus enhancer annotation of hg19 from the Roadmap (https://personal.broadinstitute.org/meuleman/reg2map/HoneyBadger2-intersect_release/) has been integrated into the software for users’ convenience (“./consensus_enhancer_annotation.txt”). Briefly, it includes ~470,000 enhancers across 127 cell lines/tissues, which are identified with DNase-seq peaks in 53 cell-lines and chromatin states learnt by ChromHMM in 127 cell lines/tissues. 
+2. Enhancer annotation: A consensus enhancer annotation of hg19 from the Roadmap (https://personal.broadinstitute.org/meuleman/reg2map/HoneyBadger2-intersect_release/) has been integrated into the software for users’ convenience (“./consensus_enhancer_annotation.txt”). Briefly, it includes ~470,000 enhancers across 127 cell lines/tissues, which are identified with DNase-seq peaks in 53 cell-lines and chromatin states learnt by ChromHMM in 127 cell lines/tissues. 
 The enhancer annotation file has 3 columns:
 
 
@@ -73,18 +73,18 @@ The enhancer annotation file has 3 columns:
 	3 | enh | int | Enhancer end
 
 
-* TF motif hits:
+3. TF motif hits:
 	The genome-wide motif annotation data from the Roadmap (http://compbio.mit.edu/encode-motifs/matches-with-controls-0.3.txt.gz) has been integrated into the software. Controls (indicated by “_C”) were removed. This results in ~13.6M motif hits for ~500 TFs. The TF motif hits are pre-overlapped with enhancers and promoters. The overlapping result for each chromosome can be found at the “promoter_tf.Rdata” and “enh_tf.Rdata”. Each .Rdata file contains two objects: enh_tf and use_pos. The “enh_tf” object is a matrix, where each row is an enhancer in the corresponding chromosome and each column is a TF. The “use_pos” object is a vector, which contains the index of rows of “enh_tf” object in all enhancers of the chromosome. For example, the first three elements of the “use_pos” in chr1 is 16,18,23, which means the first three rows of “enh_tf” correspond to the 16th, 18th and 23rd enhancers of all enhancers within chr1 in the consensus enhancer annotation file. 
 
-* The enhancer activity profile (DNase-seq):
+4. The enhancer activity profile (DNase-seq):
 	The DNase-seq signal track was downloaded in .bigwig format and then converted to .bedGraph format with bedtools (cite). The averaged DNase-seq signal for each enhancer across 127 cell lines/tissues has been pre-calculated as described in the method section. The result (“/data/enh_act_mat.Rdata”) is organized into a matrix where each row is an enhancer and each column is one of 127 cell lines. The order of enhancers is strictly the same as the enhancer annotation file.
 
-* The gene expression profile (log2(RPKM)):
+5. The gene expression profile (log2(RPKM)):
 	The log2(RPKM) signal for each gene across 127 cell lines/tissues has been pre-calculated. The result (“/data/gene_act_updated.Rdata”) is organized into a matrix, where each row is a gene and each column is one of 127 cell lines. The order of genes is strictly the same as the promoter file.
 
 ## Description of scripts
 The software consists of 6 sequential scripts. A wrapper is provided to run the whole pipeline. A detailed description of each piece is provided in case the user only wants to run a part of the pipeline. The order of the scripts is indicated in the name.
-* 1_network_construction.R: This step takes chromatin contact maps as input and constructs a list of connected 3D modules.
+1. 1_network_construction.R: This step takes chromatin contact maps as input and constructs a list of connected 3D modules.
 	* Input data: chromatin contact maps
 	* Output: 
 		* A list of adjacency matrices, which is stored as “./output/network_adjacency_matrix.Rdata”. Each adjacency matrix corresponds to one 3D module.
@@ -94,7 +94,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 	
 		Rscript 1_network_construction.R <path to the chromatin contact data>
 
-* 2_annotate_fragment.R: This script annotates each node as enhancers or promoters. The active gene, enhancer and TFs are selected here.
+2. 2_annotate_fragment.R: This script annotates each node as enhancers or promoters. The active gene, enhancer and TFs are selected here.
 	* Input data: 
 		* Coordinates of genomic fragments (“../output/island_loc.txt”)
 		* Enhancer coordinates ("../data/consensus_enhancer_coord.txt")
@@ -105,7 +105,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		Rscript 2_annotate_fragment.R
 		Note: the path of input data has been specified in the script.
 
-* 3_extract_frag_TF_matrix.R: This script identifies TF motif hits within fragments that are annotated as enhancers or promoters.
+3. 3_extract_frag_TF_matrix.R: This script identifies TF motif hits within fragments that are annotated as enhancers or promoters.
 	* Input data:
 		* Consensus enhancer annotation
 		* enhancer -TF overlapping results and promoter-TF overlapping results
@@ -120,7 +120,7 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		Rscript 3_extract_frag_TF_matrix.R <cell_index>
 		Notes: The first argument corresponds to the Roadmap index of the input cell line. A full list of index of 127 cell lines and descriptions are provided as “ENCODE_cell_type.csv”
 
-* 4_merge_network.R: This script will merge multiple 3D modules with similar TF profiles together and construct merged sub-networks.
+4. 4_merge_network.R: This script will merge multiple 3D modules with similar TF profiles together and construct merged sub-networks.
 	* Input data:
 		* Adjacency matrix for each module.
 		* Fragment-TF matrix generated in step 3.

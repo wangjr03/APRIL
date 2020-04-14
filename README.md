@@ -98,9 +98,8 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 	* Output:
 		Two objects are integrated in "../output/island_annotation.Rdata": “enh_id” and “gene_id”. Both objects are a list object, which store the index of enhancers/promoters that can overlap with the fragments. The order of the fragments is the same as the input DNA fragments. The index of enhancers/promoters is relative to the consensus enhancer annotation file/promoter file. If the index is 0, it means the fragment cannot overlap with any enhancers/promoters. 
 	* Command line usage:
-	    
-	    
 		```Rscript 2_annotate_fragment.R```
+		
 		Note: the path of input data has been specified in the script.
 
 3. 3_extract_frag_TF_matrix.R: This script identifies TF motif hits within fragments that are annotated as enhancers or promoters.

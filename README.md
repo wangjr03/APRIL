@@ -27,7 +27,7 @@ col | abbrv. | type | description
 * SNPs effect size: SNPs effect size file provides the effect score on the exact disease, which should be in tab separated file with three columns:
     
     
-	col | abbrv. | type | description
+col | abbrv. | type | description
 -- | -- | -- | --
 1 | chr | string | Name of the chromosome
 2 | pos | int | Genetic variant position  

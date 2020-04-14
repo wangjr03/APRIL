@@ -46,7 +46,7 @@ The program is developed under R/3.5.1 and depends on six R packages: igraph, Ma
 
 
 	col | abbrv. | type | description
-	--- | --- | --- | --- | ---
+	--- | --- | --- | ---
 	1 | chr | string | Name of the chromosome
 	2 | start | int | Gene body start
 	3 | end | int | Gene body end

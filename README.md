@@ -78,6 +78,18 @@ The enhancer annotation file has 3 columns:
 5. The gene expression profile (log2(RPKM)):
 	The log2(RPKM) signal for each gene across 127 cell lines/tissues has been pre-calculated. The result (“/data/gene_act_updated.Rdata”) is organized into a matrix, where each row is a gene and each column is one of 127 cell lines. The order of genes is strictly the same as the promoter file.
 
+## Fast run
+```APRIL.py```
+* `-f1`: required, path to the chromatin contact data
+* `-f2`: required, path to the SNP effect size data
+* `-f3`: required, path to the disease gene data
+* `-i`: required, cell line index
+* `-t`: not required, TF expression threshold. DEFAULT: 1
+* `-n`: not required, number of clusters. DEFAULT: number of modules/20
+* `-m`: not required, methods using in label propagation. options: GENE, OTHER, BOTH. DEFAULT: BOTH
+* `-tree`: not required, number of trees using in random forest. DEFAULT: 50
+
+
 ## Description of scripts
 The software consists of 6 sequential scripts. A wrapper is provided to run the whole pipeline. A detailed description of each piece is provided in case the user only wants to run a part of the pipeline. The order of the scripts is indicated in the name.
 1. 1_network_construction.R: This step takes chromatin contact maps as input and constructs a list of connected 3D modules.

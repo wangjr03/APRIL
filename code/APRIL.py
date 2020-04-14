@@ -13,6 +13,7 @@ def parse_args():
     parser.add_argument("-m", default = "BOTH", type = str, required = False, help = "methods using in label propagation. options: GENE, OTHER, BOTH. DEFAULT: BOTH")
     parser.add_argument("-tree", default="50", type=str, required=False, help="number of trees using in random forest. DEFAULT: 50")
     parser.add_argument("-f3", type=str, required=True, help="path to the disease gene data")
+    parser.add_argument("-f4", type=str, required=True, help="path to the eQTL data")
     args = parser.parse_args()
     return args
 
@@ -25,7 +26,7 @@ def build_graphs(args):
 def predict_gene(args):
     os.system("Rscript 5_annotate_effect.R {0}".format(args.f2))
     os.system("Rscript 6_label_propagation.R {0}".format(args.m))
-    os.system("Rscript 7_random_forest.R {0} {1} {2}".format(args.i, args.tree, args.f3))
+    os.system("Rscript 7_random_forest.R {0} {1} {2} {3}".format(args.i, args.tree, args.f3,args.f4))
 
 def main():
     args = parse_args()

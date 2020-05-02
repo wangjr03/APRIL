@@ -93,21 +93,12 @@ get_gene <- function(x,y){# x: graph, y:node_index
   gene_name <- apply(gene_pos, 1, function(z){
     tmp_start <- as.numeric(z[2])
     tmp_end <- as.numeric(z[3])
-    tmp_pos <- promoter[promoter[,1] == z[1] & promoter[,2] < tmp_end & promoter[,3] > tmp_start,4]
+    tmp_pos <- promoter[promoter[,1] == z[1] & promoter[,2] < tmp_end & promoter[,3] > tmp_start,4][1]
     return(tmp_pos)
   })
   
-  # annotate disease_gene (pos)
-  disease_label <- lapply(gene_name, function(z) {
-    tmp_label <- match(table = disease_gene, z)
-    return(min(sum(!is.na(tmp_label)),1))
-  })
-  disease_label <- unlist(disease_label)
-  # modified sapply when length(gene_index) == 0
-  if(length(gene_index) == 1 ){
-    gene_name <- as.vector(gene_name)
-    disease_label <- max(disease_label)
-  }
+  disease_label <- match(table = disease_gene, gene_name)
+  disease_label <- ifelse( is.na(disease_label), 0, 1)
   
   # annotate neg gene, 0 is unlabelled
   if( sum(disease_label)>0 ){
@@ -135,6 +126,7 @@ load("../output/graph_effect.Rdata")
 
 # eqtl set 
 eqtl <- read.table(sig_eqtl)
+eqtl[,3] <- as.character(eqtl[,3])
 
 #### step 4 ####
 # generate neg & pos features
@@ -175,21 +167,20 @@ data_feature <- function(x,y,z,w){ # x is subgraph, y is graph gene, z is node_i
     }
 
     ## eqtl
-    tmp_eqtl_gene <- data.frame(p)
-    tmp_eqtl_gene[,1] <- as.character(tmp_eqtl_gene[,1])
-    tmp_eqtl <- semi_join(eqtl, tmp_eqtl_gene, by = c("V3"="p"))
-
+    tmp_eqtl <- eqtl[eqtl[,3]==p,]
+    
     eqtl_p = 0.05
+    eqtl_n = 0
     if(nrow(tmp_eqtl)>0){
       tmp_neighbor <- frag[neighbor,]
       for(i in 1:nrow(tmp_eqtl)){
         if(sum(tmp_neighbor[,1] == tmp_eqtl[i,1] & tmp_neighbor[,2] < tmp_eqtl[i,2] &
                tmp_neighbor[,3] > tmp_eqtl[i,2])>0){
           eqtl_p <- min(eqtl_p, tmp_eqtl[i,4])
+          eqtl_n <- eqtl_n + 1
         }
       }
     }
-    
 
     # their own features
     self_TF <- frag_TF_mat[z[k],]
@@ -198,10 +189,10 @@ data_feature <- function(x,y,z,w){ # x is subgraph, y is graph gene, z is node_i
     self_closeness <- tmp_closeness[k]
     self_pagerank <- tmp_pagerank[k]
     
-    # gene z score and act, multi genes
-    self_act <- max(gene_act[gene_id[[z[k]]]])
-    na_flag <- sum(!is.na(gene_z[gene_id[[z[k]]]]))
-    self_z <- ifelse(na_flag == 0, 0, max(gene_z[gene_id[[z[k]]]], na.rm = T) ) 
+    # gene z score and act
+    self_act <- gene_act[gene_id[[z[k]]][1]]
+    na_flag <- is.na(gene_z[gene_id[[z[k]]][1]])
+    self_z <- ifelse(na_flag, 0, gene_z[gene_id[[z[k]]][1]]) 
     
     # neighbor z score and act
     enh_tmp_index <- enh_id[z[neighbor]]
@@ -230,20 +221,15 @@ data_feature <- function(x,y,z,w){ # x is subgraph, y is graph gene, z is node_i
     names(self_act) <- "gene_act"
     names(self_z) <- "gene_z"
     names(eqtl_p) <- "eqtl_pvalue"
+    names(eqtl_n) <- "eqtl_number"
     
-    c(eqtl_p, self_degree, self_betweenness, self_closeness, self_pagerank, neighbor_max_effect, neighbor_sum_effect,
+    c(eqtl_n, eqtl_p, self_degree, self_betweenness, self_closeness, self_pagerank, neighbor_max_effect, neighbor_sum_effect,
       n_neighbor, self_act, self_z, neighbor_act_stat, neighbor_z_stat, self_TF, neighbor_feature)
   }, y$gene_index, y$gene_id, SIMPLIFY = TRUE)
   
   tmp_feature <- cbind(gene_label, t(tmp_feature))
-  
-  # gene name
-  if(length(y$gene_index)>1){
-    rownames(tmp_feature) <- sapply(y$gene_id, function(x) paste(x, collapse = "_"))
-  }else{
-    rownames(tmp_feature) <- paste(y$gene_id, collapse = "_")
-  }
-  return(tmp_feature)
+  rownames(tmp_feature) <- y$gene_id
+  return(tmp_feature)              
 }
 
 all_data <- mapply(data_feature, skeleton_igraph, graph_gene, node_index, graph_effect)
@@ -256,10 +242,6 @@ all_data <- do.call(rbind, all_data)
 # train the model
 pos <- all_data[all_data[,1]==1,-1]
 neg <- all_data[all_data[,1]==-1,-1]
-# check eqtl
-print(sum(pos[,1]<0.05))
-print(sum(neg[,1]<0.05))
-print(sum(all_data[,2]<0.05))
 
 # balance data
 if (nrow(neg) > nrow(pos)){
@@ -273,9 +255,6 @@ pos <- cbind(Label = 1, pos)
 neg <- cbind(Label = 0, neg)
 dat <- data.frame(rbind(neg,pos))
 unlabel <- data.frame(all_data[all_data[,1]==0,])
-
-# remove 0 colmun
-#dat <- dat[,which(apply(dat, 2, sum)!=0)]
 dat$Label <- ifelse(dat$Label==1, "disease genes", "controlled genes")
 dat$Label <- as.factor(dat$Label)
 
@@ -290,6 +269,7 @@ for (i in 1:folds) {
   test_pred <- predict(rf, test[,-1], type = "prob")
   val$predictions <- append(val$predictions, list( as.vector(test_pred[,2]) ) ) # record probability
   val$labels <- append(val$labels, list( ifelse(test$Label == 'disease genes', 1, 0) ) ) # record true labels
+  val$importance <- append(val$importance , list( as.vector(importance(rf)[,1]) ) ) # record importance
 }
 
 ## Draw the averaged ROC curve and calculate AUC ##
@@ -301,6 +281,14 @@ plot(ROCperf, col="grey",lty=6, main=paste("Mean AUC:",mean_auroc)) # individual
 plot(ROCperf, lwd=3, avg="vertical", add=T) # averaged ROC
 dev.off()
 
+## average feature importance
+im <- matrix(unlist(val$importance), byrow = FALSE, ncol= folds)
+im <- apply(im, 1, mean)     
+names(im) <- colnames(dat)[-1]   
+im <- data.frame(im[order(im, decreasing = T)])
+write.table(im, "../output/importance_randomForest.txt", row.names = T, col.names = F, quote = F, sep = "\t")
+
+## predict score            
 prob_disease_test <- cbind(rownames(dat[unlist(dat_folds),]), unlist(val$prediction)) # test in 10-fold
 
 rf <- randomForest(Label~., dat, ntree = ntrees)

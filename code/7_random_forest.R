@@ -93,7 +93,7 @@ get_gene <- function(x,y){# x: graph, y:node_index
   gene_name <- apply(gene_pos, 1, function(z){
     tmp_start <- as.numeric(z[2])
     tmp_end <- as.numeric(z[3])
-    tmp_pos <- promoter[promoter[,1] == z[1] & promoter[,2] < tmp_end & promoter[,3] > tmp_start,4]
+    tmp_pos <- promoter[promoter[,1] == z[1] & promoter[,2] < tmp_end & promoter[,3] > tmp_start,4][1]
     return(tmp_pos)
   })
   

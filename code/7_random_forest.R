@@ -93,7 +93,7 @@ get_gene <- function(x,y){# x: graph, y:node_index
   gene_name <- apply(gene_pos, 1, function(z){
     tmp_start <- as.numeric(z[2])
     tmp_end <- as.numeric(z[3])
-    tmp_pos <- promoter[promoter[,1] == z[1] & promoter[,2] < tmp_end & promoter[,3] > tmp_start,4][1]
+    tmp_pos <- promoter[promoter[,1] == z[1] & promoter[,2] < tmp_end & promoter[,3] > tmp_start,4]
     return(tmp_pos)
   })
   
@@ -236,7 +236,7 @@ all_data <- mapply(data_feature, skeleton_igraph, graph_gene, node_index, graph_
 # remove null
 null_index <- sapply(all_data, function(x) ncol(x) > 0 )
 all_data <- all_data[null_index]
-all_data <- do.call(rbind, all_data)
+all_data <- data.frame(do.call(rbind, all_data))
 
 #### step4 ####
 # train the model

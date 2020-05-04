@@ -260,16 +260,18 @@ dat$Label <- as.factor(dat$Label)
 
 # cross-validation
 folds = 10
-val <- list(predictions = list(), labels = list(), importance = list())
+val <- list(predictions = list(), labels = list(), importance = list(), pred_unlabel = list())
 dat_folds <- createFolds(1:nrow(dat), k = folds)
 for (i in 1:folds) {
   test <- dat[dat_folds[[i]],]
   train <- dat[-dat_folds[[i]],]
   rf <- randomForest(Label~., train, ntree = ntrees)
   test_pred <- predict(rf, test[,-1], type = "prob")
+  unlabel_pred <- predict(rf, unlabel[,-1], type = "prob")
   val$predictions <- append(val$predictions, list( as.vector(test_pred[,2]) ) ) # record probability
   val$labels <- append(val$labels, list( ifelse(test$Label == 'disease genes', 1, 0) ) ) # record true labels
   val$importance <- append(val$importance , list( as.vector(importance(rf)[,1]) ) ) # record importance
+  val$pred_unlabel <- append(val$pred_unlabel , list( as.vector(unlabel_pred[,2]) ) ) # record unlabel probability
 }
 
 ## Draw the averaged ROC curve and calculate AUC ##
@@ -290,10 +292,12 @@ write.table(im, "../output/importance_randomForest.txt", row.names = T, col.name
 
 ## predict score            
 prob_disease_test <- cbind(rownames(dat[unlist(dat_folds),]), unlist(val$prediction)) # test in 10-fold
+                     
+prob_disease_unlabel <- matrix(unlist(val$pred_unlabel), byrow = FALSE, ncol= folds) # unlabel average in 10-fold
+prob_disease_unlabel <- apply(prob_disease_unlabel, 1, mean)  
+prob_disease_unlabel <- cbind(rownames(unlabel), prob_disease_unlabel) 
 
-rf <- randomForest(Label~., dat, ntree = ntrees)
-test_pred <- predict(rf, unlabel[,-1], type = "prob")
-prob_disease_unlabel <- test_pred[,2]
+prob_disease_score <- rbind(prob_disease_test, prob_disease_unlabel)
 write.table(prob_disease, "../output/prob_disease_gene.txt", row.names = F, col.names = F, quote = F, sep = "\t")
 
 

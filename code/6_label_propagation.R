@@ -106,13 +106,12 @@ gene_result <- mapply(function(x,y) return(x[y$gene_index]),
 #### step 3 ####
 # draw performance boxplot and results
 
-disease_rank <- mapply(function(x,y){
+disease_rank <- 1-mapply(function(x,y){
   tmp_order <- rank(x)
   tmp_order[y$disease_gene] / length(x)
 }, gene_result, graph_disease_gene)
 
-
-control_rank <- mapply(function(x,y){
+control_rank <- 1-mapply(function(x,y){
   tmp_order <- rank(x)
   tmp_order[y$control_gene] / length(x)
 }, gene_result, graph_disease_gene)
@@ -121,10 +120,11 @@ result_label <- c( rep("disease gene",length(disease_rank)), rep("controlled gen
 result_rank <- c(disease_rank, control_rank)
 result_dat <- data.frame(cbind(result_rank, result_label))
 result_dat$result_rank <- as.numeric(as.character(result_dat$result_rank))
-test_score <- pairwise.t.test(result_dat$result_rank, result_dat$result_label)
-pdf("propagation_performance.pdf")
-boxplot(result_rank~result_label, result_dat,border = c("#DB843D","#70588E"), outline=F, xlab = "",
-        ylab = "Percentile rank", main = paste0("Pairwise t-test\n p value = ",test_score$p.value))
+pairwise.t.test(result_dat$result_rank, result_dat$result_label)
+p_val <- pairwise.t.test(result_dat$result_rank, result_dat$result_label, alternative="less")$p.value
+pdf("../output/propagation_performance.pdf")
+boxplot(disease_rank, control_rank, border = c("#DB843D","#70588E"), outline=F, names = c("disease gene","controlled gene"),
+        ylim = rev(range(0,1)),lwd=2, main = paste0("Percentile rank of prediction score", "\n p = ",signif(p_val,3)))
 dev.off()
 
 # rank in each network

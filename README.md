@@ -155,13 +155,11 @@ The software consists of 6 sequential scripts. A wrapper is provided to run the 
 		* Final APRIL subgraphs are stored as igraph objects in “../output/merged_skeleton_igraph.Rdata”. Only TFs linking two different modules are kept, other TFs are masked from the subgraph.
 	* Command line usage: 
 	
-		`Rscript 4_merge_network.R <TF_expression_threshold> <number_of_clusters>`
+		`Rscript 4_merge_network.R <number_of_clusters>`
 		
 		Notes: 
 		
-		1. The first argument specifies the threshold of the expression for TFs. The default value will be 1, which is used to generate all results in this paper.
-		
-		2. The second argument specifies the number of module clusters. We used hierarchical clustering with the “complete” method based on  correlations.  The default value of clusters is “number of modules/20”. The result shown in this paper is generated with default value.
+		1. The first argument specifies the number of module clusters. We used hierarchical clustering with the “complete” method based on  correlations.  The default value of clusters is “number of modules/20”. The result shown in this paper is generated with default value.
 
 * 5_annotate_effect.R: This script annotates effect size for each genomic fragment based on GWAS SNPs and maps the effect size of nodes in each network.
 	* Input data:

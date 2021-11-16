@@ -6,7 +6,7 @@ args <- commandArgs(T)
 SNP_file = as.character(args[1])
 
 # read snp file
-snp <- read.table("SNP_file", sep = "\t")
+snp <- read.table(SNP_file, sep = "\t")
 snp[,1] <- as.character(snp[,1])
 
 # read fragment coordinate
